@@ -18,11 +18,11 @@
     },
     "nixpkgs-brainflow": {
       "locked": {
-        "lastModified": 1715360703,
-        "narHash": "sha256-NOvjB4g5yiCdyLIawwwMWHYyInueV1VrPDRTEuyoZLI=",
+        "lastModified": 1715363750,
+        "narHash": "sha256-q/tD7Cb75T/g/gFY5el3s26/hls5SRUjUsa+c/jl12Q=",
         "owner": "Pandapip1",
         "repo": "nixpkgs",
-        "rev": "e56aa70c5f92c3a827d6c1da55fd4401d98a04e2",
+        "rev": "a56b7bcf3d7d24c51bfd9752da00491b31874443",
         "type": "github"
       },
       "original": {

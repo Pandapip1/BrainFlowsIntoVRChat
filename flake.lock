@@ -1,0 +1,61 @@
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1715266358,
+        "narHash": "sha256-doPgfj+7FFe9rfzWo1siAV2mVCasW+Bh8I1cToAXEE4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f1010e0469db743d14519a1efd37e23f8513d714",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-brainflow": {
+      "locked": {
+        "lastModified": 1715360703,
+        "narHash": "sha256-NOvjB4g5yiCdyLIawwwMWHYyInueV1VrPDRTEuyoZLI=",
+        "owner": "Pandapip1",
+        "repo": "nixpkgs",
+        "rev": "e56aa70c5f92c3a827d6c1da55fd4401d98a04e2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Pandapip1",
+        "ref": "brainflow",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-optree": {
+      "locked": {
+        "lastModified": 1715359498,
+        "narHash": "sha256-F8ovhVNv96p3Ik2d9/wW1y5dyrj3ax2Bdf49/3CWPoc=",
+        "owner": "Pandapip1",
+        "repo": "nixpkgs",
+        "rev": "fc312ae4e84b00fe817141d8c82259b64f294352",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Pandapip1",
+        "ref": "init-pythonpackages-optree",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-brainflow": "nixpkgs-brainflow",
+        "nixpkgs-optree": "nixpkgs-optree"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

@@ -36,12 +36,13 @@ class PwrBands(BaseLogic):
         self.current_dict = {}
         self.ema_decay = ema_decay
 
-        # remove_blinks settings
+        # detect_artifacts settings
         self.f_params = butter(2, 10 / (self.sampling_rate / 2), btype='low')  # 10 Hz lowpass filter
-        self.blink_thresh = 100  # 100 uV difference is indicative of blink
+        self.art_thresh = 100  # 100 uV difference is indicative of blink
     
-    def detect_blinks(self, data):
-        data = data.copy()
+    def detect_artifacts(self, data):
+        ## artifact detection inspired by openbci algorithm
+        ## https://openbci.com/community/automated-eye-blink-detection-online-2/
         b, a = self.f_params
         
         # lowpass filter to blink range
@@ -50,9 +51,9 @@ class PwrBands(BaseLogic):
         # find median and use difference to it to threshold mask
         median = np.median(filtered, axis=1, keepdims=True)
         diff = np.abs(filtered - median)
-        mask = diff > self.blink_thresh
+        mask = diff > self.art_thresh
 
-        # return true if any blinks detected
+        # return true if any artifacts detected
         return np.any(mask)
     
     def get_data_dict(self):
@@ -64,8 +65,8 @@ class PwrBands(BaseLogic):
             DataFilter.perform_wavelet_denoising(data[eeg_chan], WaveletTypes.DB4, 5, threshold=ThresholdTypes.SOFT)
             DataFilter.remove_environmental_noise(data[eeg_chan], self.sampling_rate, NoiseTypes.FIFTY_AND_SIXTY.value)
         
-        # check if blinked
-        is_blink = self.detect_blinks(data[self.eeg_channels])
+        # check if artifact in window
+        has_artifact = self.detect_artifacts(data[self.eeg_channels])
 
         # calculate band features for left, right, and overall
         left_powers, _ = DataFilter.get_avg_band_powers(data, self.left_chans, self.sampling_rate, True)
@@ -80,7 +81,7 @@ class PwrBands(BaseLogic):
         }
 
         # smooth out powers
-        location_dict = {loc : self.location_smooth(loc, powers, is_blink) for loc, powers in location_dict.items()}
+        location_dict = {loc : self.location_smooth(loc, powers, has_artifact) for loc, powers in location_dict.items()}
 
         # create power dicts per location
         def make_power_dict(powers):
@@ -89,11 +90,11 @@ class PwrBands(BaseLogic):
 
         return ret_dict
     
-    def location_smooth(self, loc_name, target_values, is_blink):
+    def location_smooth(self, loc_name, target_values, has_artifact):
         current_values, old_target_values = self.current_dict.get(loc_name, (None, None))
 
-        # pause target update on blink window
-        if is_blink and isinstance(old_target_values, np.ndarray):
+        # pause target update on artifact window
+        if has_artifact and isinstance(old_target_values, np.ndarray):
             target_values = old_target_values
 
         # ema to target

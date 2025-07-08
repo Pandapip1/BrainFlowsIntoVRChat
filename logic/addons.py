@@ -1,5 +1,6 @@
 from logic.base_logic import BaseLogic
 from logic.neuro_feedback import NeuroFB
+
 import math
 
 class Addons(BaseLogic):

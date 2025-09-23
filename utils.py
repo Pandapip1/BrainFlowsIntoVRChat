@@ -25,7 +25,7 @@ def compute_snr(original_signal, filtered_signal):
 ## artifact detection inspired by openbci algorithm
 ## default threshold is 100 uV, absolute difference
 ## https://openbci.com/community/automated-eye-blink-detection-online-2/
-def get_artifact_mask(data, sampling_rate, threshold=100, p_ratio=0.03, is_absolute=True):
+def get_artifact_mask(data, sampling_rate, threshold=100, p_ratio=0.2, is_absolute=True):
     b, a = butter(2, 10 / (sampling_rate / 2), btype='low')  # 10 Hz lowpass filter
     
     # lowpass filter to blink range

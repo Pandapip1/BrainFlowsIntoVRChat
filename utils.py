@@ -47,4 +47,6 @@ def get_artifact_mask(data, sampling_rate, threshold=100, p_ratio=0.2, is_absolu
     # create mask where 1 if artifact detected
     mask = diff > threshold
 
+    print(np.sum(mask))
+
     return mask

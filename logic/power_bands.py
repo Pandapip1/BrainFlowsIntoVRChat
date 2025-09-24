@@ -4,7 +4,7 @@ from constants import BAND_POWERS
 import utils
 
 from brainflow.board_shim import BoardShim
-from brainflow.data_filter import DataFilter, NoiseTypes, WaveletTypes, ThresholdTypes
+from brainflow.data_filter import DataFilter, NoiseTypes, WaveletTypes, ThresholdTypes, FilterTypes
 
 import re
 import numpy as np
@@ -41,17 +41,18 @@ class PwrBands(BaseLogic):
 
         # denoise and filter data
         for eeg_chan in self.eeg_channels:
-            DataFilter.perform_wavelet_denoising(data[eeg_chan], WaveletTypes.DB4, 5, threshold=ThresholdTypes.SOFT)
             DataFilter.remove_environmental_noise(data[eeg_chan], self.sampling_rate, NoiseTypes.FIFTY_AND_SIXTY.value)
+            DataFilter.perform_bandpass(data[eeg_chan], self.sampling_rate, 0.5, 40, 1, FilterTypes.BUTTERWORTH_ZERO_PHASE.value, 0)
+            DataFilter.perform_wavelet_denoising(data[eeg_chan], WaveletTypes.DB4, 5, threshold=ThresholdTypes.SOFT)
         
         # check if artifact in window
         artifact_mask = utils.get_artifact_mask(data[self.eeg_channels], self.sampling_rate)
         has_artifact = np.any(artifact_mask)
 
         # calculate band features for left, right, and overall
-        left_powers, _ = DataFilter.get_avg_band_powers(data, self.left_chans, self.sampling_rate, True)
-        right_powers, _ = DataFilter.get_avg_band_powers(data, self.right_chans, self.sampling_rate, True)
-        avg_powers, _ = DataFilter.get_avg_band_powers(data, self.eeg_channels, self.sampling_rate, True)
+        left_powers, _ = DataFilter.get_avg_band_powers(data, self.left_chans, self.sampling_rate, False)
+        right_powers, _ = DataFilter.get_avg_band_powers(data, self.right_chans, self.sampling_rate, False)
+        avg_powers, _ = DataFilter.get_avg_band_powers(data, self.eeg_channels, self.sampling_rate, False)
 
         # create location dict
         location_dict = {

@@ -42,7 +42,7 @@ class PwrBands(BaseLogic):
         # denoise and filter data
         for eeg_chan in self.eeg_channels:
             DataFilter.remove_environmental_noise(data[eeg_chan], self.sampling_rate, NoiseTypes.FIFTY_AND_SIXTY.value)
-            DataFilter.perform_bandpass(data[eeg_chan], self.sampling_rate, 0.5, 40, 1, FilterTypes.BUTTERWORTH_ZERO_PHASE.value, 0)
+            DataFilter.perform_bandpass(data[eeg_chan], self.sampling_rate, 0.5, 50, 1, FilterTypes.BUTTERWORTH_ZERO_PHASE.value, 0)
             DataFilter.perform_wavelet_denoising(data[eeg_chan], WaveletTypes.DB4, 5, threshold=ThresholdTypes.SOFT)
         
         # check if artifact in window

@@ -1,9 +1,8 @@
 import numpy as np
 from scipy.signal import butter, filtfilt
-from brainflow.data_filter import DataFilter, FilterTypes, AggOperations, NoiseTypes
 
-def tanh_normalize(data, scale, offset):
-    return np.tanh(scale * (data + offset))
+def tanh_log(data, scale):
+    return np.tanh(scale * np.log(data))
 
 
 def smooth(current_value, target_value, weight):

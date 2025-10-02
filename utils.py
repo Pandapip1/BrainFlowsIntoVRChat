@@ -1,9 +1,8 @@
 import numpy as np
 from scipy.signal import butter, filtfilt
-from brainflow.data_filter import DataFilter, FilterTypes, AggOperations, NoiseTypes
 
-def tanh_normalize(data, scale, offset):
-    return np.tanh(scale * (data + offset))
+def tanh_log(data, scale):
+    return np.tanh(scale * np.log(data))
 
 
 def smooth(current_value, target_value, weight):
@@ -23,22 +22,23 @@ def compute_snr(original_signal, filtered_signal):
 
 
 ## artifact detection inspired by openbci algorithm
-## default threshold is 100 uV, absolute difference
+## threshold is defaulted to 4 times standard deviation of the data window
 ## https://openbci.com/community/automated-eye-blink-detection-online-2/
-def get_artifact_mask(data, sampling_rate, threshold=100, p_ratio=0.03, is_absolute=True):
+def get_artifact_mask(data, sampling_rate, std_mult=4, is_absolute=True):
     b, a = butter(2, 10 / (sampling_rate / 2), btype='low')  # 10 Hz lowpass filter
     
     # lowpass filter to blink range
     filtered = filtfilt(b, a, data)
 
-    # create a mean rolling filtered copy
-    filt_copy = np.copy(filtered)
-    period = int(sampling_rate * p_ratio)
-    for i in range(len(filt_copy)):
-        DataFilter.perform_rolling_filter(filt_copy[i], period, AggOperations.MEAN)
+    # calculate the mean
+    mean = np.mean(filtered, keepdims=True)
 
-    # find difference between original and rolling filtered
-    diff = filtered - filt_copy
+    # create a threshold from standard deviation
+    std = np.std(filtered, keepdims=True)
+    threshold = std_mult * std
+
+    # find difference between filtered and mean
+    diff = filtered - mean
     
     # absolute difference if specified
     if is_absolute:

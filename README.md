@@ -1,8 +1,6 @@
 # BFiVRC: BrainFlowsIntoVRChat
 
-This is a BrainFlow implementation of my [bci-workshop fork](https://github.com/ChilloutCharles/bci-workshop) that sends your brain's relaxation and focus metrics, and power values based on the common frequency bands used in EEG measuements, for left, right and both sides of the head. Additional support for heart rate and respiration is available when supported by your hardware.
-
-**NEW**: Added logic to read actions off of your brainwaves using machine learning. Read the README.md in the `model/intent` directory for more information.
+This is a BrainFlow implementation of my [bci-workshop fork](https://github.com/ChilloutCharles/bci-workshop) that sends your brain's relaxation and focus metrics, and power values based on the common frequency bands used in EEG measuements, for left, right and both sides of the head. Logic to read actions off of your brainwaves using machine learning. Read the README.md in the `model/intent` directory for more information. Additional support for heart rate and respiration is available when supported by your hardware.
 
 ## Why BrainFlow?
 
@@ -75,7 +73,7 @@ BFI:
       - Theta [float]
       - Delta [float]
   Addons:
-    - Hueshift [float 0-1]
+    - HueShift [float 0-1]
   Biometrics:
     - Supported [bool]
     - HeartBeatsPerSecond [float]
@@ -85,45 +83,9 @@ BFI:
     - BreathsPerMinute [int]
 ```
 
-## Deprecation
-
-We recommend updating to this schema. However, if your assets are still using the old parameter scheme, you can switch to them by adding the `--use-old-reporter` launch argument. Be aware that this will be deprecated in the future and an official announcement will be made for its sunset.
-
 ## Migration from Old Parameter Schema
 
-Need to migrate your existing prefabs? You can convert your existing parameters to the new standard using this chart.
-
-| Old Parameter | New Parameter |
-| ------------- | ----------------- |
-| osc_focus_left | BFI/NeuroFB/FocusLeft |
-| osc_focus_right | BFI/NeuroFB/FocusRight |
-| osc_focus_avg | BFI/NeuroFB/FocusAvg |
-| osc_relax_left | BFI/NeuroFB/RelaxLeft |
-| osc_relax_right | BFI/NeuroFB/RelaxRight |
-| osc_relax_avg | BFI/NeuroFB/RelaxAvg |
-| osc_heart_bpm | BFI/Biometrics/HeartBeatsPerMinute |
-| osc_heart_bps | BFI/Biometrics/HeartBeatsPerSecond |
-| osc_oxygen_percent | BFI/Biometrics/OxygenPercent |
-| osc_respiration_bpm | BFI/Biometrics/BreathsPerMinute |
-| osc_band_power_left_alpha | BFI/PwrBands/Left/Alpha |
-| osc_band_power_left_beta | BFI/PwrBands/Left/Beta |
-| osc_band_power_left_theta | BFI/PwrBands/Left/Theta |
-| osc_band_power_left_delta | BFI/PwrBands/Left/Delta |
-| osc_band_power_left_gamma | BFI/PwrBands/Left/Gamma |
-| osc_band_power_right_alpha | BFI/PwrBands/Right/Alpha |
-| osc_band_power_right_beta | BFI/PwrBands/Right/Beta |
-| osc_band_power_right_theta | BFI/PwrBands/Right/Theta |
-| osc_band_power_right_delta | BFI/PwrBands/Right/Delta |
-| osc_band_power_right_gamma | BFI/PwrBands/Right/Gamma |
-| osc_band_power_avg_alpha | BFI/PwrBands/Avg/Alpha |
-| osc_band_power_avg_beta | BFI/PwrBands/Avg/Beta |
-| osc_band_power_avg_theta | BFI/PwrBands/Avg/Theta |
-| osc_band_power_avg_delta | BFI/PwrBands/Avg/Delta |
-| osc_band_power_avg_gamma | BFI/PwrBands/Avg/Gamma |
-| osc_battery_lvl | BFI/Info/BatteryLevel |
-| osc_is_connected | BFI/Info/DeviceConnected |
-| osc_time_diff | BFI/Info/SecondsSinceLastUpdate |
-| HueShift | BFI/Addons/HueShift |
+Need to migrate your existing prefabs? Convert their parameter names using this wiki: [Migration of Old Parameters](https://github.com/ChilloutCharles/BrainFlowsIntoVRChat/wiki/Deprecation-of-Old-Parameters)
 
 ## Parameter Descriptions
 ### Utility
@@ -182,7 +144,7 @@ These Parameters give the power value for the common frequency bands used in EEG
 These Parameters are additional functions of BFiVRC
 | Parameter | Description | Type | Range |
 | ------ | ----- | ----- | ----- |
-| BFI/Addons/Hueshift | This Parameter uses combinations of relax/focus to drive a single float Parameter for material fx | Float | [0.0, 1.0] |
+| BFI/Addons/HueShift | This Parameter uses combinations of relax/focus to drive a single float Parameter for material fx | Float | [0.0, 1.0] |
 
 ### Biometrics
 These Parameters read other biometric data from your device if supported by your hardware
@@ -195,8 +157,12 @@ These Parameters read other biometric data from your device if supported by your
 | BFI/Biometrics/BreathsPerSecond | Estimated breaths taken per second  | Float | [0.0, inf) |
 | BFI/Biometrics/BreathsPerMinute | Estimated breaths taken per minute  | Int | [0, 255] |
 
-## Debugging
-To make it easier to debug, add `--debug` launch argument. This will enable the console to display debug messages for all OSC messages sent as well as make the parameter names shorter so that they are readable on VRChat's OSC debug panel as well as any other OSC displays.
+## Debugging and Logging
+- To make it easier to debug, add `--debug` launch argument. This will enable the console to display debug messages for all OSC messages sent as well as make the parameter names shorter so that they are readable on VRChat's OSC debug panel as well as any other OSC displays.
+- To record values per second, add `--enable-logs` launch argument. This will create timestamped logs under `logs` folder and can help visualize the values to assist with adjusting animations and the like.
+
+## Using Old Parameter Scheme
+We recommend updating to this schema. However, if your assets are still using the old parameter scheme, you can switch to them by adding the `--use-old-reporter` launch argument.
 
 ## Thanks
 
@@ -204,7 +170,10 @@ Thanks to
 - [@Mitzi_DelverVRC](https://twitter.com/Mitzi_DelverVRC) and [AartHark](https://github.com/AartHauk) for help with PPG signal work.
 - [@wordweaver1001](https://twitter.com/wordweaver1001) for intial user testing.
 - [AtriusX](https://github.com/AtriusX) for helping create a parameter schema.
-- [Hosomi](https://twitter.com/FakeHosomi), [Eni](https://github.com/eni-808), [AtriusX](https://github.com/AtriusX), [Rantis](https://github.com/RantiMess) for development and testing of the action classification model and integration.
+- [sync1211](https://github.com/sync1211) for enhancing the reconnect retry logic
+- [Hosomi](https://twitter.com/FakeHosomi), [Eni](https://github.com/eni-808), [AtriusX](https://github.com/AtriusX), [Rantis](https://github.com/RantiMess), [DeliciousSalad](https://github.com/DeliciousSalad) for development and testing of the action classification model and integration.
+- [Summer](https://x.com/TheGoodAI1) and Programmerboi for the development of the self-supervised model.
+- [Scapsters](https://github.com/Scapsters) for adding the ability to use multiple recorded sessions for train data gathering
 
 ## Troubleshooting
 - I have broken Bluetooth adapter built into my pc and I would like to use a dongle instead. How can I connect my headband to that dongle?

@@ -6,7 +6,7 @@ import numpy as np
 from brainflow.board_shim import BoardShim
 
 # imported so decorator can recognize loaded model
-from model.intent.model import CNNGRUModel
+import model.intent.model as model
 
 class MLAction(BaseLogic):
     def __init__(self, board, ema_decay=1/60):
@@ -29,7 +29,7 @@ class MLAction(BaseLogic):
         data = self.board.get_current_board_data(self.sample_size)
         eeg_data = data[self.eeg_channels]
         
-        # predict binary thought
+        # predict singular thought
         target_value = self.pipeline.predict(eeg_data, self.sampling_rate)
 
         # smooth
@@ -38,7 +38,21 @@ class MLAction(BaseLogic):
         # get action index with highest score
         action_idx = np.argmax(self.current_value)
 
+        # generate angles from output count
+        count = len(self.current_value)
+        angles = (2.0 * np.pi) * (np.arange(0, count) / count)
+
+        # treat outputs as magnitudes and create vectors
+        vectors = self.current_value * np.exp(1j * angles)
+
+        # sum vectors
+        summed_vector = np.sum(vectors)
+        
         # return as dictionary
         ret_dict['Action'] = action_idx.item()
         ret_dict |= {'Action{}'.format(i): value for i, value in enumerate(self.current_value.tolist())}
+        ret_dict |= {
+            'ActionH' : np.real(summed_vector),
+            'ActionV' : np.imag(summed_vector)
+        }
         return ret_dict
